@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <div>
+        <select>
+            <option value="red">Red suitcase</option>
+            <option value="blue">Blue suitcase</option>
+        </select>
+    </div>
+    <br />
+    <things>
+    </things>
+    <suitcase>
+        <container>
+        </container>
+    </suitcase>
+
+    <suitcase>
+        <container>
+        </container>
+    </suitcase>
+
+    <script>
+
+        // -------------- DEFINIZIONI --------------
+        // Recupera la stringa JSON dal local storage usando la chiave specifica
+        // const suitcasesStateJSON = localStorage.getItem("suitcasesData");
+        //  const suitcasesState = JSON.parse(suitcasesStateJSON);; // COSTANTE / registro CHE PERMETTE di SALVARE il PROPRIO SET DI OGGETTI IN OGNI VALIGIA contiene due array
+        // modello
+        // Converti l'array in una stringa JSON
+        
+        const suitcasesState = getStartData();
+        
+        const suitcaseSelector = document.getElementsByTagName('select')[0]; // e' un elemento dell'html (di tipo select) che consente di scegliere la valigia
+        const thingsContainer = document.getElementsByTagName('things')[0]; //è un elemento dell'html (di tipo things) 
+        const suitcaseElements = document.getElementsByTagName('suitcase'); // elementi dell html che contengono le valigie
+        let currentSuitcaseIndex = 0;
+        const availableThings = ['cravatta', 'pantaloni', 'reggiseno', 'gonna', 'mutande', 'tshirt'];
+        
+        function getStartData() {
+            // Ottieni la stringa JSON memorizzata nel localStorage
+            const suitcaseStateString = localStorage.getItem('suitcasesData');
+            if (suitcaseStateString) {// Converte la stringa JSON in un array
+                let suitcasesStateStored = JSON.parse(suitcaseStateString);
+                return suitcasesStateStored; // accanto a return metto il risultato di tutta la funzione
+            }
+            return [[],[]];
+        }
+        function removeThing(suitcaseIndex, itemIndex) {
+            suitcasesState[suitcaseIndex].splice(itemIndex, 1);
+            updateLocalStorage();
+            renderSuitcaseState();
+        }
+
+        function renderItem(suitcaseIndex, itemIndex) {
+            const thingLabel = document.createElement('span');
+            thingLabel.innerText = availableThings[suitcasesState[suitcaseIndex][itemIndex]]; // qui scrivo nell'etichetta il nome dell'oggetto che prendo dal modello
+            thingLabel.onclick = () => {
+                removeThing(suitcaseIndex, itemIndex);                  
+            }
+            const suitcase = document.getElementsByTagName("suitcase")[suitcaseIndex];
+            suitcase.getElementsByTagName("container")[0].append(thingLabel); // come si fa nella consolle?????
+        }
+        
+        function fillAvailableThings() {  // questa funzione crea i pulsanti/oggetti che è possibile selezionare
+            for (let i = 0; i < availableThings.length; i++) {
+                const thingButton = document.createElement('span');
+                thingButton.innerText = i+1 + ': ' + availableThings[i];
+                thingButton.onclick = () => { addThingToCurrentSuitcase(i); }
+                thingsContainer.append(thingButton);
+            }
+        }
+        function addThingToCurrentSuitcase(thingIndex) {
+            suitcasesState[currentSuitcaseIndex].push(thingIndex); // qui sto inserendo i numeri degli indici che mi serviranno a popolare la valigia degli oggetti corrispondenti agli indici stessi
+
+            console.log({
+                m: 'aggiunto un nuovo oggetto nella valigia!!',
+                'valigia adesso': suitcasesState
+            });
+
+            renderSuitcaseState();
+            updateLocalStorage();
+        }
+        
+        function updateLocalStorage() {
+            const suitcasesStateJSON = JSON.stringify(suitcasesState);
+            localStorage.setItem("suitcasesData", suitcasesStateJSON);
+        }
+
+
+        //const spannis = suitcaseElements[i].getElementsByTagName('container')[0].getElementsByTagName('span');
+
+        function renderSuitcaseState() {
+            for (let i = 0; i < suitcaseElements.length; i++) {
+                const container = suitcaseElements[i].getElementsByTagName('container')[0];
+                container.innerHTML = '';
+                for (let j = 0; j < suitcasesState[i].length; j++) { // 
+                    renderItem(i, j);
+                }
+            }
+        }
+        // -------------- Succede appena la pagina e' caricata --------------
+
+        suitcaseSelector.addEventListener('change', () => {
+            currentSuitcaseIndex = suitcaseSelector.selectedIndex;
+            console.log('Selected new suitcase with index: ' + currentSuitcaseIndex);
+        })
+
+        updateLocalStorage();
+        fillAvailableThings();
+        renderSuitcaseState();
+    </script>
+
+
+
+</body>
+
+</html>

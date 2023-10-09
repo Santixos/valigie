@@ -1,0 +1,38 @@
+suitcase {
+    position: relative;
+    display: inline-block;
+    background-image: url('https://cdn11.bigcommerce.com/s-jos4rsb330/images/stencil/1280x1280/attribute_rule_images/15669_source_1649109146.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    padding: 2em;
+    width: 200px;
+    min-height: 200px;
+  }
+  suitcase:nth-of-type(2) {
+    filter: hue-rotate(240deg);
+  }
+  things {
+    display: block;
+  }
+  
+  span {
+    display: inline-block;
+    background: black;
+    color: white;
+    border-radius: 1em;
+    padding: 0.5em;
+    cursor: pointer;
+  }
+  
+  suitcase container {
+    position: absolute;
+    left: calc(50% - 2.5em); 
+    top: 4em;
+    padding-left: -50%;
+    width: 2em;
+  }
+  
+  select {
+    font-size: 1.5em;
+    border: 2px black solid;
+  }
