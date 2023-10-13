@@ -21,6 +21,7 @@
     </things>
     <suitcase>
         <container>
+
         </container>
     </suitcase>
 
@@ -38,7 +39,7 @@
         // modello
         // Converti l'array in una stringa JSON
         
-        const suitcasesState = getStartData();
+        const suitcasesState = getStartData(); // modello array fatto di array
         
         const suitcaseSelector = document.getElementsByTagName('select')[0]; // e' un elemento dell'html (di tipo select) che consente di scegliere la valigia
         const thingsContainer = document.getElementsByTagName('things')[0]; //è un elemento dell'html (di tipo things) 
@@ -61,7 +62,7 @@
             renderSuitcaseState();
         }
 
-        function renderItem(suitcaseIndex, itemIndex) {
+        function renderItem(suitcaseIndex, itemIndex) { // questa funzione crea l' oggetto nella valigia
             const thingLabel = document.createElement('span');
             thingLabel.innerText = availableThings[suitcasesState[suitcaseIndex][itemIndex]]; // qui scrivo nell'etichetta il nome dell'oggetto che prendo dal modello
             thingLabel.onclick = () => {
@@ -96,15 +97,43 @@
             localStorage.setItem("suitcasesData", suitcasesStateJSON);
         }
 
+       
+        function chekIfItemIsVisualized(suitcaseIndex, itemIndex) { //  prende un elemento del modello e lo confronta con gli elemti visualizzati fino a trovare la corrispondenza(esce dalla funziona quando trova la corrispondenza) gli elementi che sono visualizzati, se non trova corrispondenza il risultato della funzione e' FALSE 
+            const itemNumber = suitcasesState[suitcaseIndex][itemIndex]; // identificatore oggetto nel modello
+            const visualizedElements = suitcaseElements[suitcaseIndex].getElementsByTagName('span'); // span visualizzati nella valigia
+            for (i = 0; i < visualizedElements.length; i++) {
+                visualizedElements[i].innerText;
+                if ( availableThings[itemNumber] === visualizedElements[i].innerText) {
+                    return true;
+                }              
+            }
+            return false;
+        }
 
-        //const spannis = suitcaseElements[i].getElementsByTagName('container')[0].getElementsByTagName('span');
-
+        function chekIfVisualizedIsInModel(suitcaseIndex, visualizedElement) { // questa funzione confronta ogni elemento visualizzato con il modello
+            for (j = 0; j < suitcasesState[suitcaseIndex].length; j++) {
+                if (visualizedElement.innerText === availableThings[suitcasesState[suitcaseIndex][j]]) {
+                    return true;
+                }
+            }
+            return false;
+        }
         function renderSuitcaseState() {
+
             for (let i = 0; i < suitcaseElements.length; i++) {
                 const container = suitcaseElements[i].getElementsByTagName('container')[0];
-                container.innerHTML = '';
-                for (let j = 0; j < suitcasesState[i].length; j++) { // 
-                    renderItem(i, j);
+                
+                for (let j = 0; j < suitcasesState[i].length; j++) {
+                    if(!chekIfItemIsVisualized(i,j)) {
+                        renderItem(i, j);
+                    }  
+                }
+                const visualizedElements = suitcaseElements[i].getElementsByTagName('span'); 
+                for (let j = 0; j < visualizedElements.length; j++) {
+                    if (!chekIfVisualizedIsInModel()) {
+                       visualizedElements[j].remove();
+                    }
+
                 }
             }
         }
