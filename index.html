@@ -130,7 +130,7 @@
                 }
                 const visualizedElements = suitcaseElements[i].getElementsByTagName('span'); 
                 for (let j = 0; j < visualizedElements.length; j++) {
-                    if (!chekIfVisualizedIsInModel()) {
+                    if (!chekIfVisualizedIsInModel(i,visualizedElements[j])) {
                        visualizedElements[j].remove();
                     }
 
