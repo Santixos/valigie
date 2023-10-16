@@ -38,12 +38,12 @@
         //  const suitcasesState = JSON.parse(suitcasesStateJSON);; // COSTANTE / registro CHE PERMETTE di SALVARE il PROPRIO SET DI OGGETTI IN OGNI VALIGIA contiene due array
         // modello
         // Converti l'array in una stringa JSON
-        
+        //const suitcasesStateWithId = [[{clothIndex: 0, id:5}],[{clothIndex: 0, id:56}]]; // il primo parametro e' il numero che mi identifica l'oggetto fra quelli disponibili il secondo  numero è l'id univoco 
         const suitcasesState = getStartData(); // modello array fatto di array
         
         const suitcaseSelector = document.getElementsByTagName('select')[0]; // e' un elemento dell'html (di tipo select) che consente di scegliere la valigia
         const thingsContainer = document.getElementsByTagName('things')[0]; //è un elemento dell'html (di tipo things) 
-        const suitcaseElements = document.getElementsByTagName('suitcase'); // elementi dell html che contengono le valigie
+        const suitcaseHtmlElements = document.getElementsByTagName('suitcase'); // elementi dell html che contengono le valigie
         let currentSuitcaseIndex = 0;
         const availableThings = ['cravatta', 'pantaloni', 'reggiseno', 'gonna', 'mutande', 'tshirt'];
         
@@ -56,10 +56,25 @@
             }
             return [[],[]];
         }
-        function removeThing(suitcaseIndex, itemIndex) {
-            suitcasesState[suitcaseIndex].splice(itemIndex, 1);
+        function removeThing(suitcaseIndex, id) { //verificare come fare senza l'uso del for !!!!!!!(SUPERFUNCTION)
+            let itemIndex;
+            const currentSuitcaseElements = suitcasesState[suitcaseIndex]; // contiene tutti gli elementi/oggetti della valigia nel modello
+             
+            for (let i = 0; i < currentSuitcaseElements.length; i++) { 
+               
+               if (currentSuitcaseElements[i].id === id) { // con l'indicice i individuo l'oggetto contenuto nell vligia (questo oggetto ha due parametri:"clothIndex"e "id")
+                itemIndex = i;
+                break;
+               }
+            }
+            if  (itemIndex === undefined) {
+                console.error("item index not found");
+                return;
+            }
+            currentSuitcaseElements.splice(itemIndex, 1); // per individuare l'oggetto non tengo conto delle proprietà dell'oggetto, ma solo l'indice
             updateLocalStorage();
             renderSuitcaseState();
+            
         }
 
         function renderItem(suitcaseIndex, itemIndex) { // questa funzione crea l' oggetto nella valigia
@@ -99,11 +114,11 @@
 
        
         function chekIfItemIsVisualized(suitcaseIndex, itemIndex) { //  prende un elemento del modello e lo confronta con gli elemti visualizzati fino a trovare la corrispondenza(esce dalla funziona quando trova la corrispondenza) gli elementi che sono visualizzati, se non trova corrispondenza il risultato della funzione e' FALSE 
-            const itemNumber = suitcasesState[suitcaseIndex][itemIndex]; // identificatore oggetto nel modello
-            const visualizedElements = suitcaseElements[suitcaseIndex].getElementsByTagName('span'); // span visualizzati nella valigia
+            const itemObject = suitcasesState[suitcaseIndex][itemIndex]; // identificatore oggetto nel modello
+            const visualizedElements = suitcaseHtmlElements[suitcaseIndex].getElementsByTagName('span'); // span visualizzati nella valigia
             for (i = 0; i < visualizedElements.length; i++) {
                 visualizedElements[i].innerText;
-                if ( availableThings[itemNumber] === visualizedElements[i].innerText) {
+                if ( availableThings[itemObject.clothIndex] === visualizedElements[i].innerText) {
                     return true;
                 }              
             }
@@ -120,15 +135,15 @@
         }
         function renderSuitcaseState() {
 
-            for (let i = 0; i < suitcaseElements.length; i++) {
-                const container = suitcaseElements[i].getElementsByTagName('container')[0];
+            for (let i = 0; i < suitcaseHtmlElements.length; i++) {
+                const container = suitcaseHtmlElements[i].getElementsByTagName('container')[0];
                 
                 for (let j = 0; j < suitcasesState[i].length; j++) {
                     if(!chekIfItemIsVisualized(i,j)) {
                         renderItem(i, j);
                     }  
                 }
-                const visualizedElements = suitcaseElements[i].getElementsByTagName('span'); 
+                const visualizedElements = suitcaseHtmlElements[i].getElementsByTagName('span'); 
                 for (let j = 0; j < visualizedElements.length; j++) {
                     if (!chekIfVisualizedIsInModel(i,visualizedElements[j])) {
                        visualizedElements[j].remove();
@@ -149,7 +164,7 @@
         renderSuitcaseState();
     </script>
 
-
+    
 
 </body>
 
