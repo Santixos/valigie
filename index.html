@@ -79,9 +79,11 @@
 
         function renderItem(suitcaseIndex, itemIndex) { // questa funzione crea l' oggetto nella valigia
             const thingLabel = document.createElement('span');
-            thingLabel.innerText = availableThings[suitcasesState[suitcaseIndex][itemIndex]]; // qui scrivo nell'etichetta il nome dell'oggetto che prendo dal modello
+            const itemObject =  suitcasesState[suitcaseIndex][itemIndex];
+            thingLabel.innerText = availableThings[itemObject.clothIndex]; // qui scrivo nell'etichetta il nome dell'oggetto che prendo dal modello
+            thingLabel.dataset.id = itemObject.id; // salvo nella proprietà dataset il nostro id
             thingLabel.onclick = () => {
-                removeThing(suitcaseIndex, itemIndex);                  
+                removeThing(suitcaseIndex, itemObject.id);                  
             }
             const suitcase = document.getElementsByTagName("suitcase")[suitcaseIndex];
             suitcase.getElementsByTagName("container")[0].append(thingLabel); // come si fa nella consolle?????
@@ -95,8 +97,17 @@
                 thingsContainer.append(thingButton);
             }
         }
-        function addThingToCurrentSuitcase(thingIndex) {
-            suitcasesState[currentSuitcaseIndex].push(thingIndex); // qui sto inserendo i numeri degli indici che mi serviranno a popolare la valigia degli oggetti corrispondenti agli indici stessi
+        
+        function generateId() {
+          
+            return (new Date()).getTime(); // qui genero un numero e lo utilizzo come output della funzione
+
+        }
+
+        function addThingToCurrentSuitcase(thingIndex) { /// qui inserisco gli ogetti nel modello. riprendi da qui necessario generare id (creare una funzione apposita per id)
+            const id =  generateId();
+            const suitcaseArray = suitcasesState[currentSuitcaseIndex];
+            suitcaseArray.push({clothIndex: thingIndex, id: id });              // qui sto inserendo i numeri degli indici che mi serviranno a popolare la valigia degli oggetti corrispondenti agli indici stessi
 
             console.log({
                 m: 'aggiunto un nuovo oggetto nella valigia!!',
@@ -114,25 +125,28 @@
 
        
         function chekIfItemIsVisualized(suitcaseIndex, itemIndex) { //  prende un elemento del modello e lo confronta con gli elemti visualizzati fino a trovare la corrispondenza(esce dalla funziona quando trova la corrispondenza) gli elementi che sono visualizzati, se non trova corrispondenza il risultato della funzione e' FALSE 
-            const itemObject = suitcasesState[suitcaseIndex][itemIndex]; // identificatore oggetto nel modello
+            const itemObject = suitcasesState[suitcaseIndex][itemIndex]; // identificatore oggetto nel modello (in questa fnzione confronto un elemento del modello con tutti gli pan)
             const visualizedElements = suitcaseHtmlElements[suitcaseIndex].getElementsByTagName('span'); // span visualizzati nella valigia
             for (i = 0; i < visualizedElements.length; i++) {
-                visualizedElements[i].innerText;
-                if ( availableThings[itemObject.clothIndex] === visualizedElements[i].innerText) {
+                
+                if ( itemObject.id === visualizedElements[i].dataset.id) { //nel modello considero la parte testuale e la confronto con cio' che è visualizzato nello span
                     return true;
                 }              
             }
             return false;
         }
 
-        function chekIfVisualizedIsInModel(suitcaseIndex, visualizedElement) { // questa funzione confronta ogni elemento visualizzato con il modello
+        function chekIfVisualizedIsInModel(suitcaseIndex, visualizedElement) { // questa funzione confronta ogni elemento visualizzato con il modello (in questa fnzione confronto uno span con tutti gli elenti del modello pan)
+            
             for (j = 0; j < suitcasesState[suitcaseIndex].length; j++) {
-                if (visualizedElement.innerText === availableThings[suitcasesState[suitcaseIndex][j]]) {
+                const itemObject = suitcasesState[suitcaseIndex][j];
+                if (visualizedElement.dataset.id === itemObject.id) { // qui confronto la parte di testo dello span con cio' che c'è nel modello
                     return true;
                 }
             }
             return false;
         }
+
         function renderSuitcaseState() {
 
             for (let i = 0; i < suitcaseHtmlElements.length; i++) {
